@@ -1,5 +1,4 @@
-import { Home, LeafyGreen, Settings } from "lucide-react"
-
+import { Home, LeafyGreen, Settings } from "lucide-react";
 import {
     Sidebar,
     SidebarContent,
@@ -9,18 +8,19 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import {ModeToggle} from "@/components/mode-toggle";
 
 // Menu items.
 const items = [
     {
         title: "Home",
-        url: "#",
+        url: "/",
         icon: Home,
     },
     {
         title: "Trade",
-        url: "#",
+        url: "/trade",
         icon: LeafyGreen,
     },
     {
@@ -28,21 +28,21 @@ const items = [
         url: "#",
         icon: Settings,
     },
-]
+];
 
 export function AppSidebar() {
     return (
         <Sidebar>
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Trade Pilot</SidebarGroupLabel>
+                    <SidebarGroupLabel className={"text-2xl"}>Trade Pilot</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
                                         <a href={item.url}>
-                                            <item.icon />
+                                            <item.icon/>
                                             <span>{item.title}</span>
                                         </a>
                                     </SidebarMenuButton>
@@ -51,7 +51,11 @@ export function AppSidebar() {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
+                <div className="absolute top-2 right-2 bottom-0.5">
+                    <ModeToggle />
+                </div>
+
             </SidebarContent>
         </Sidebar>
-    )
+);
 }
