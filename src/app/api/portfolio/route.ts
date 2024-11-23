@@ -5,7 +5,7 @@ export async function GET() {
     const dummyPortfolio: Portfolio = {
         equity: 125750.25,
         buyingPower: 25000.00,
-        dayPnL: 1250.75,
+        dayPnL: -1250.75,
         totalPnL: 25750.25,
     };
 
