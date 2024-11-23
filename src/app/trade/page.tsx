@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import OptionQuoteDto from "@/lib/entity/OptionQuoteDto";
 import { Alert } from "@/components/ui/alert";
-import OptionChainTable from "@/components/option-chain-table";
+import OptionChainTable from '@/components/options/option-chain-table';
 
 const Trade = () => {
     const [ticker, setTicker] = useState<string>('');
