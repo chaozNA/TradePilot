@@ -19,6 +19,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tabs": "^1.1.1",
     "@radix-ui/react-tooltip": "^1.1.4",
+    "bufferutil": "^4.0.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -31,6 +32,8 @@
     "react-hook-form": "^7.53.2",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "utf-8-validate": "^6.0.3",
+    "ws": "^8.16.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -44,5 +47,12 @@
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "overrides": {
+      "ws": "^8.16.0",
+      "bufferutil": "^4.0.8",
+      "utf-8-validate": "^6.0.3"
+    }
   }
 }

@@ -4,13 +4,18 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  ws: ^8.16.0
+  bufferutil: ^4.0.8
+  utf-8-validate: ^6.0.3
+
 importers:
 
   .:
     dependencies:
       '@alpacahq/alpaca-trade-api':
         specifier: ^3.1.2
-        version: 3.1.2
+        version: 3.1.2(bufferutil@4.0.8)(utf-8-validate@6.0.5)
       '@hookform/resolvers':
         specifier: ^3.9.1
         version: 3.9.1(react-hook-form@7.53.2(react@19.0.0-rc-66855b96-20241106))
@@ -38,6 +43,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.1.4
         version: 1.1.4(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106)
+      bufferutil:
+        specifier: ^4.0.8
+        version: 4.0.8
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -74,6 +82,12 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.15)
+      utf-8-validate:
+        specifier: ^6.0.3
+        version: 6.0.5
+      ws:
+        specifier: ^8.16.0
+        version: 8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.5)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -1003,6 +1017,10 @@ packages:
   buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
 
+  bufferutil@4.0.8:
+    resolution: {integrity: sha512-4T53u4PdgsXqKaIctwF8ifXlRTTmEPJ8iEPWFdGZvcf7sbwYo6FKFEX9eNNAnzFZ7EzJAQ3CJeOtCRA4rDp7Pw==}
+    engines: {node: '>=6.14.2'}
+
   busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
     engines: {node: '>=10.16.0'}
@@ -1812,6 +1830,10 @@ packages:
       sass:
         optional: true
 
+  node-gyp-build@4.8.4:
+    resolution: {integrity: sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==}
+    hasBin: true
+
   normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
@@ -2379,6 +2401,10 @@ packages:
       '@types/react':
         optional: true
 
+  utf-8-validate@6.0.5:
+    resolution: {integrity: sha512-EYZR+OpIXp9Y1eG1iueg8KRsY8TuT8VNgnanZ0uA3STqhHQTLwbl+WX76/9X5OY12yQubymBpaBSmMPkSTQcKA==}
+    engines: {node: '>=6.14.2'}
+
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
@@ -2417,12 +2443,12 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  ws@7.5.10:
-    resolution: {integrity: sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==}
-    engines: {node: '>=8.3.0'}
+  ws@8.18.0:
+    resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
+    engines: {node: '>=10.0.0'}
     peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: ^5.0.2
+      bufferutil: ^4.0.8
+      utf-8-validate: ^6.0.3
     peerDependenciesMeta:
       bufferutil:
         optional: true
@@ -2445,7 +2471,7 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@alpacahq/alpaca-trade-api@3.1.2':
+  '@alpacahq/alpaca-trade-api@3.1.2(bufferutil@4.0.8)(utf-8-validate@6.0.5)':
     dependencies:
       axios: 0.21.4
       dotenv: 6.2.0
@@ -2457,7 +2483,7 @@ snapshots:
       msgpack5: 5.3.2
       nats: 1.4.12
       urljoin: 0.1.5
-      ws: 7.5.10
+      ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.5)
     transitivePeerDependencies:
       - bufferutil
       - debug
@@ -3341,6 +3367,10 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
+
+  bufferutil@4.0.8:
+    dependencies:
+      node-gyp-build: 4.8.4
 
   busboy@1.6.0:
     dependencies:
@@ -4311,6 +4341,8 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
+  node-gyp-build@4.8.4: {}
+
   normalize-path@3.0.0: {}
 
   nuid@1.1.6: {}
@@ -4888,6 +4920,10 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.12
 
+  utf-8-validate@6.0.5:
+    dependencies:
+      node-gyp-build: 4.8.4
+
   util-deprecate@1.0.2: {}
 
   which-boxed-primitive@1.0.2:
@@ -4948,7 +4984,10 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  ws@7.5.10: {}
+  ws@8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.5):
+    optionalDependencies:
+      bufferutil: 4.0.8
+      utf-8-validate: 6.0.5
 
   yaml@2.6.0: {}
 
