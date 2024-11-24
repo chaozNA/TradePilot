@@ -1,118 +1,167 @@
+import AlpacaClient from "../AlpacaClient";
 import { AlpacaOptionClient } from "@alpacahq/alpaca-trade-api/dist/resources/datav2/option_websocket_v1beta1";
-import AlpacaClient from "@/lib/AlpacaClient";
-import { StreamData } from "@/lib/types/alpaca";
-
-type QuoteCallback = (data: StreamData) => void;
+import { AlpacaOptionQuote } from "@alpacahq/alpaca-trade-api/dist/resources/datav2/entityv2";
+import {
+  QuoteCallback,
+  StreamData,
+  StreamError,
+  StreamStatus,
+} from "../types/alpaca";
 
 export class LiveQuoteService {
-  private static instance: LiveQuoteService | null = null;
   private socket: AlpacaOptionClient;
-  private subscriptions: Map<string, Set<QuoteCallback>> = new Map();
-  private isConnected: boolean = false;
-  private reconnectAttempts: number = 0;
-  private maxReconnectAttempts: number = 5;
-  private reconnectDelay: number = 1000;
+  private symbol: string | null = null;
+  private callback: QuoteCallback | null = null;
+  private status: StreamStatus = {
+    isConnected: false,
+    error: null,
+    lastUpdated: null,
+  };
+  private mockInterval: NodeJS.Timeout | null = null;
+  private readonly isDevelopment = process.env.NODE_ENV === "development";
 
-  private constructor() {
+  constructor() {
     this.socket = AlpacaClient.getInstance().option_stream;
-    this.setupSocketHandlers();
+    this.setupWebSocket();
   }
 
-  public static getInstance(): LiveQuoteService {
-    if (!LiveQuoteService.instance) {
-      LiveQuoteService.instance = new LiveQuoteService();
-    }
-    return LiveQuoteService.instance;
-  }
-
-  private setupSocketHandlers(): void {
+  private setupWebSocket(): void {
     this.socket.onConnect(() => {
-      console.log("Connected to Alpaca options WebSocket");
-      this.isConnected = true;
-      this.reconnectAttempts = 0;
-
-      // Resubscribe to all symbols
-      for (const symbol of this.subscriptions.keys()) {
-        this.socket.subscribeForQuotes([symbol]);
-      }
+      console.log("WebSocket connected");
+      this.updateStatus({ isConnected: true, error: null });
+      this.subscribeToSymbol();
     });
 
     this.socket.onDisconnect(() => {
-      console.log("Disconnected from Alpaca options WebSocket");
-      this.isConnected = false;
-      this.attemptReconnect();
-    });
-
-    this.socket.onOptionQuote((quote: any) => {
-      const symbol = quote.S;
-      const callbacks = this.subscriptions.get(symbol);
-      if (callbacks) {
-        const streamData: StreamData = {
-          type: "quote",
-          data: quote,
-          timestamp: new Date().toISOString(),
-        };
-        callbacks.forEach((callback) => callback(streamData));
-      }
+      console.log("WebSocket disconnected");
+      this.updateStatus({ isConnected: false });
     });
 
     this.socket.onError((error: any) => {
       console.error("WebSocket error:", error);
-      const errorData: StreamData = {
-        type: "error",
-        data: "WebSocket error occurred",
-        timestamp: new Date().toISOString(),
-      };
-      // Notify all subscribers about the error
-      this.subscriptions.forEach((callbacks) => {
-        callbacks.forEach((callback) => callback(errorData));
+      this.updateStatus({
+        error: typeof error === "string" ? error : "Connection error occurred",
       });
+    });
+
+    this.socket.onOptionQuote((quote: AlpacaOptionQuote) => {
+      if (this.callback && quote.Symbol === this.symbol) {
+        this.notifyQuote(quote);
+      }
     });
   }
 
-  private attemptReconnect(): void {
-    if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts);
-      console.log(`Attempting to reconnect in ${delay}ms`);
-      setTimeout(() => {
-        this.reconnectAttempts++;
-        this.connect();
-      }, delay);
-    }
+  private updateStatus(update: Partial<StreamStatus>): void {
+    this.status = {
+      ...this.status,
+      ...update,
+      lastUpdated: new Date().toISOString(),
+    };
   }
 
-  public subscribe(symbol: string, callback: QuoteCallback): void {
-    console.log("Subscribing to symbol:", symbol);
-    if (!this.subscriptions.has(symbol)) {
-      this.subscriptions.set(symbol, new Set([callback]));
-      if (!this.isConnected) {
-        this.connect();
-      } else {
-        this.socket.subscribeForQuotes([symbol]);
+  private notifyQuote(quote: AlpacaOptionQuote): void {
+    if (!this.callback) return;
+
+    const streamData: StreamData = {
+      type: "quote",
+      data: quote,
+      timestamp: new Date().toISOString(),
+    };
+
+    this.callback(streamData);
+  }
+
+  private subscribeToSymbol(): void {
+    if (!this.symbol || !this.status.isConnected) return;
+
+    try {
+      console.log("Subscribing to symbol:", this.symbol);
+      this.socket.subscribeForQuotes([this.symbol]);
+
+      if (this.isDevelopment) {
+        this.startMockData();
       }
-    } else {
-      this.subscriptions.get(symbol)?.add(callback);
+    } catch (error) {
+      console.error("Subscription error:", error);
+      this.updateStatus({
+        error: "Failed to subscribe to symbol",
+      });
     }
   }
 
-  public connect(): void {
-    if (!this.isConnected) {
-      console.log("Connecting to WebSocket");
+  private startMockData(): void {
+    this.stopMockData();
+
+    this.mockInterval = setInterval(() => {
+      if (!this.callback || !this.symbol) return;
+
+      const basePrice = 150 + (Math.random() - 0.5) * 2;
+      const mockQuote: AlpacaOptionQuote = {
+        Symbol: this.symbol,
+        BidExchange: "MOCK",
+        BidPrice: parseFloat(basePrice.toFixed(2)),
+        BidSize: Math.floor(Math.random() * 100) * 10,
+        AskExchange: "MOCK",
+        AskPrice: parseFloat((basePrice + 0.05).toFixed(2)),
+        AskSize: Math.floor(Math.random() * 100) * 10,
+        Timestamp: new Date().toISOString(),
+        Condition: "Regular",
+      };
+
+      this.notifyQuote(mockQuote);
+    }, 1000);
+  }
+
+  private stopMockData(): void {
+    if (this.mockInterval) {
+      clearInterval(this.mockInterval);
+      this.mockInterval = null;
+    }
+  }
+
+  public connect(symbol: string, callback: QuoteCallback): void {
+    this.cleanup();
+
+    this.symbol = symbol;
+    this.callback = callback;
+
+    if (!this.status.isConnected) {
       this.socket.connect();
+    } else {
+      this.subscribeToSymbol();
     }
   }
 
-  public unsubscribe(symbol: string, callback: QuoteCallback): void {
-    console.log("Unsubscribing from symbol:", symbol);
-    const callbacks = this.subscriptions.get(symbol);
-    if (callbacks) {
-      callbacks.delete(callback);
-      if (callbacks.size === 0) {
-        this.subscriptions.delete(symbol);
-        if (this.isConnected) {
-          this.socket.unsubscribeFromQuotes([symbol]);
+  public disconnect(): void {
+    this.cleanup();
+  }
+
+  private cleanup(): void {
+    this.stopMockData();
+
+    if (this.symbol && this.status.isConnected) {
+      try {
+        if (typeof this.socket.unsubscribeFromQuotes === "function") {
+          this.socket.unsubscribeFromQuotes([this.symbol]);
         }
+      } catch (error) {
+        console.error("Cleanup error:", error);
       }
     }
+
+    if (this.status.isConnected) {
+      this.socket.disconnect();
+    }
+
+    this.symbol = null;
+    this.callback = null;
+    this.updateStatus({
+      isConnected: false,
+      error: null,
+    });
+  }
+
+  public getStatus(): StreamStatus {
+    return { ...this.status };
   }
 }

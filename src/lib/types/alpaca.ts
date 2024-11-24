@@ -1,28 +1,21 @@
-import {
-  AlpacaOptionQuote,
-  AlpacaOptionTrade,
-} from "@alpacahq/alpaca-trade-api/dist/resources/datav2/entityv2";
+import { AlpacaOptionQuote } from "@alpacahq/alpaca-trade-api/dist/resources/datav2/entityv2";
 
-export type QuoteData = {
-  type: "quote";
+export interface StreamData {
+  type: "quote" | "error";
   data: AlpacaOptionQuote;
   timestamp: string;
-};
+}
 
-export type TradeData = {
-  type: "trade";
-  data: AlpacaOptionTrade;
-  timestamp: string;
-};
+export interface StreamError {
+  message: string;
+  code: string;
+}
 
-export type ErrorData = {
-  type: "error";
-  data: string;
-  timestamp: string;
-};
+export type QuoteCallback = (data: StreamData) => void;
+export type ErrorCallback = (error: StreamError) => void;
 
-export type StreamData = QuoteData | TradeData | ErrorData;
-
-export interface QuoteCallback {
-  (data: StreamData): void;
+export interface StreamStatus {
+  isConnected: boolean;
+  error: string | null;
+  lastUpdated: string | null;
 }

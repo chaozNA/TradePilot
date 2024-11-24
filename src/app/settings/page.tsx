@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { StreamData } from "@/lib/types/alpaca";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,22 +15,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2, XCircle } from "lucide-react";
 
-export default function SettingsContent() {
-  const [ticker, setTicker] = useState<string>("");
-  const [connected, setConnected] = useState<boolean>(false);
+type ConnectionStatus = "disconnected" | "connecting" | "connected";
+
+export default function SettingsPage() {
+  const [ticker, setTicker] = useState("");
+  const [status, setStatus] = useState<ConnectionStatus>("disconnected");
+  const [error, setError] = useState<string | null>(null);
   const [liveData, setLiveData] = useState<StreamData[]>([]);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-      }
-    };
-  }, [eventSource]);
 
   const handleConnect = () => {
     if (!ticker) {
@@ -38,94 +32,95 @@ export default function SettingsContent() {
       return;
     }
 
-    // Close existing connection if any
-    if (eventSource) {
-      eventSource.close();
-    }
-
+    handleDisconnect();
+    setStatus("connecting");
     setError(null);
-    const newEventSource = new EventSource(`/api/stream?symbol=${ticker}`);
 
-    newEventSource.onopen = () => {
-      console.log(`Connected to live updates for ${ticker}`);
-      setConnected(true);
+    const source = new EventSource(`/api/stream?symbol=${ticker}`);
+
+    source.onopen = () => {
+      setStatus("connected");
+      setError(null);
     };
 
-    newEventSource.onmessage = (event: MessageEvent) => {
+    source.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data) as StreamData;
         setLiveData((prev) => [data, ...prev].slice(0, 100));
       } catch (error) {
         console.error("Error parsing message:", error);
-        setError("Error parsing data from server");
       }
     };
 
-    newEventSource.onerror = (event) => {
-      console.error("EventSource error:", event);
+    source.onerror = () => {
       setError("Connection error occurred");
-      setConnected(false);
-      newEventSource.close();
+      setStatus("disconnected");
+      source.close();
     };
 
-    setEventSource(newEventSource);
+    setEventSource(source);
   };
 
   const handleDisconnect = () => {
-    if (eventSource) {
-      eventSource.close();
-      setEventSource(null);
-    }
-    setConnected(false);
+    eventSource?.close();
+    setEventSource(null);
+    setStatus("disconnected");
     setLiveData([]);
     setError(null);
   };
 
-  const formatTimestamp = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString();
-  };
-
-  const renderDataRow = (data: StreamData) => {
-    switch (data.type) {
-      case "quote":
-        return (
-          <TableRow key={data.timestamp}>
-            <TableCell>{formatTimestamp(data.timestamp)}</TableCell>
-            <TableCell>
-              <Badge variant="outline">Quote</Badge>
-            </TableCell>
-            <TableCell>${data.data.BidPrice}</TableCell>
-            <TableCell>${data.data.AskPrice}</TableCell>
-            <TableCell>{data.data.BidSize}</TableCell>
-            <TableCell>{data.data.AskSize}</TableCell>
-          </TableRow>
-        );
-      case "trade":
-        return (
-          <TableRow key={data.timestamp}>
-            <TableCell>{formatTimestamp(data.timestamp)}</TableCell>
-            <TableCell>
-              <Badge>Trade</Badge>
-            </TableCell>
-            <TableCell colSpan={2}>${data.data.Price}</TableCell>
-            <TableCell colSpan={2}>{data.data.Size}</TableCell>
-          </TableRow>
-        );
-      case "error":
-        return (
-          <TableRow key={data.timestamp}>
-            <TableCell>{formatTimestamp(data.timestamp)}</TableCell>
-            <TableCell>
-              <Badge variant="destructive">Error</Badge>
-            </TableCell>
-            <TableCell colSpan={4}>{data.data}</TableCell>
-          </TableRow>
-        );
-    }
-  };
+  const renderQuoteTable = () => (
+    <Card>
+      <CardHeader>
+        <CardTitle>Live Quote Feed</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Time</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Bid Exchange</TableHead>
+                <TableHead>Bid Price</TableHead>
+                <TableHead>Bid Size</TableHead>
+                <TableHead>Ask Exchange</TableHead>
+                <TableHead>Ask Price</TableHead>
+                <TableHead>Ask Size</TableHead>
+                <TableHead>Condition</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {liveData.map(({ type, timestamp, data }) => (
+                <TableRow key={timestamp}>
+                  <TableCell>
+                    {new Date(timestamp).toLocaleTimeString()}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={type === "error" ? "destructive" : "outline"}
+                    >
+                      {type}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{data.BidExchange}</TableCell>
+                  <TableCell>${data.BidPrice.toFixed(2)}</TableCell>
+                  <TableCell>{data.BidSize}</TableCell>
+                  <TableCell>{data.AskExchange}</TableCell>
+                  <TableCell>${data.AskPrice.toFixed(2)}</TableCell>
+                  <TableCell>{data.AskSize}</TableCell>
+                  <TableCell>{data.Condition}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
-    <div className="container mx-auto space-y-6">
+    <div className="container mx-auto space-y-6 py-6">
       <Card>
         <CardHeader>
           <CardTitle>Live Market Data Stream</CardTitle>
@@ -134,26 +129,34 @@ export default function SettingsContent() {
           <div className="flex items-center space-x-4">
             <Input
               type="text"
-              placeholder="Enter ticker symbol"
+              placeholder="Enter option symbol"
               value={ticker}
               onChange={(e) => setTicker(e.target.value.toUpperCase())}
-              className="max-w-[200px]"
-              disabled={connected}
+              className="max-w-[300px]"
+              disabled={status !== "disconnected"}
             />
-            {!connected ? (
-              <Button onClick={handleConnect} disabled={!ticker}>
-                Connect
-              </Button>
-            ) : (
-              <Button onClick={handleDisconnect} variant="destructive">
-                Disconnect
-              </Button>
-            )}
+            <Button
+              onClick={
+                status === "connected" ? handleDisconnect : handleConnect
+              }
+              variant={status === "connected" ? "destructive" : "default"}
+              disabled={
+                status === "connecting" ||
+                (!ticker && status === "disconnected")
+              }
+            >
+              {status === "connected" ? "Disconnect" : "Connect"}
+            </Button>
             <div className="flex items-center space-x-2">
-              {connected ? (
+              {status === "connected" ? (
                 <>
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
                   <span className="text-sm text-green-500">Connected</span>
+                </>
+              ) : status === "connecting" ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin text-yellow-500" />
+                  <span className="text-sm text-yellow-500">Connecting...</span>
                 </>
               ) : (
                 <>
@@ -173,32 +176,7 @@ export default function SettingsContent() {
         </CardContent>
       </Card>
 
-      {liveData.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Live Data Feed</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Time</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Bid Price</TableHead>
-                    <TableHead>Ask Price</TableHead>
-                    <TableHead>Bid Size</TableHead>
-                    <TableHead>Ask Size</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {liveData.map((data) => renderDataRow(data))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {liveData.length > 0 && renderQuoteTable()}
     </div>
   );
 }

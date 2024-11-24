@@ -1,40 +1,31 @@
-// src/app/api/stream/route.ts
 import { LiveQuoteService } from "@/lib/services/LiveQuoteService";
 import { QuoteCallback, StreamData } from "@/lib/types/alpaca";
 
 export async function GET(request: Request): Promise<Response> {
   const { searchParams } = new URL(request.url);
-  const symbol = searchParams.get("symbol");
+  const symbol = searchParams.get("symbol")?.trim();
 
   if (!symbol) {
     return new Response("Symbol is required", { status: 400 });
   }
 
-  const liveQuoteService = LiveQuoteService.getInstance();
-  let callback: QuoteCallback;
+  const quoteService = new LiveQuoteService();
 
   const stream = new ReadableStream({
     start(controller) {
-      console.log("Starting stream for symbol:", symbol);
-
-      // Define the callback function
-      callback = (data: StreamData) => {
+      const callback: QuoteCallback = (data: StreamData) => {
         try {
           controller.enqueue(`data: ${JSON.stringify(data)}\n\n`);
         } catch (error) {
-          console.error("Error sending data:", error);
+          console.error("Stream error:", error);
           controller.error(error);
         }
       };
 
-      // Connect and subscribe to updates
-      liveQuoteService.subscribe(symbol, callback);
+      quoteService.connect(symbol, callback);
     },
     cancel() {
-      console.log("Stream cancelled for symbol:", symbol);
-      if (callback) {
-        liveQuoteService.unsubscribe(symbol, callback);
-      }
+      quoteService.disconnect();
     },
   });
 
