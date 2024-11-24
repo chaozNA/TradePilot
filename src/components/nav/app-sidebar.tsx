@@ -10,7 +10,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ModeToggle } from "@/components/mode-toggle";
+import { ModeToggle } from "@/components/nav/mode-toggle";
 
 // Menu items with grouping
 const menuGroups = {
