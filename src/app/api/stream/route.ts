@@ -1,46 +1,47 @@
+// src/app/api/stream/route.ts
 import { LiveQuoteService } from "@/lib/services/LiveQuoteService";
-import { StreamData } from "@/lib/types/alpaca";
+import { QuoteCallback, StreamData } from "@/lib/types/alpaca";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export async function GET(request: Request): Promise<Response> {
+  const { searchParams } = new URL(request.url);
+  const symbol = searchParams.get("symbol");
 
-export async function GET(request: Request) {
-  const symbol = new URL(request.url).searchParams.get("symbol");
   if (!symbol) {
     return new Response("Symbol is required", { status: 400 });
   }
 
-  const encoder = new TextEncoder();
-  const stream = new TransformStream();
-  const writer = stream.writable.getWriter();
+  const liveQuoteService = LiveQuoteService.getInstance();
+  let callback: QuoteCallback;
 
-  const quoteService = new LiveQuoteService({
-    quoteCallback: (data: StreamData) => {
-      try {
-        const message = `data: ${JSON.stringify(data)}\n\n`;
-        writer
-          .write(encoder.encode(message))
-          .catch((error: Error) =>
-            console.error("Error writing to stream:", error),
-          );
-      } catch (error) {
-        console.error("Error processing quote:", error);
+  const stream = new ReadableStream({
+    start(controller) {
+      console.log("Starting stream for symbol:", symbol);
+
+      // Define the callback function
+      callback = (data: StreamData) => {
+        try {
+          controller.enqueue(`data: ${JSON.stringify(data)}\n\n`);
+        } catch (error) {
+          console.error("Error sending data:", error);
+          controller.error(error);
+        }
+      };
+
+      // Connect and subscribe to updates
+      liveQuoteService.subscribe(symbol, callback);
+    },
+    cancel() {
+      console.log("Stream cancelled for symbol:", symbol);
+      if (callback) {
+        liveQuoteService.unsubscribe(symbol, callback);
       }
     },
   });
 
-  request.signal.addEventListener("abort", () => {
-    console.log("Client disconnected, cleaning up...");
-    quoteService.disconnect();
-  });
-
-  quoteService.connect();
-  quoteService.subscribeToSymbol(symbol);
-
-  return new Response(stream.readable, {
+  return new Response(stream, {
     headers: {
       "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
+      "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
     },
   });
