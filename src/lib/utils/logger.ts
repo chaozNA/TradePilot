@@ -1,4 +1,10 @@
-import pino from "pino";
-import logger from "next-logger";
+import { createLogger, format, transports } from "winston";
 
-export default logger;
+export const logger = createLogger({
+  transports: [
+    new transports.Console({
+      handleExceptions: true,
+      format: format.json(),
+    }),
+  ],
+});

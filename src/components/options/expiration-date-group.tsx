@@ -3,14 +3,14 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils/utils";
 import { OptionStrikeTable } from "./option-strike-table";
 import { GroupedOptions } from "./option-types";
-import OptionQuoteDto from "@/lib/entity/OptionQuoteDto";
+import { OptionQuote } from "@/lib/types/OptionQuote";
 
 interface ExpirationDateGroupProps {
   expirationDate: string;
   isExpanded: boolean;
   onToggle: () => void;
   groupedByStrike: GroupedOptions;
-  onOptionClick: (option: OptionQuoteDto) => void;
+  onOptionClick: (option: OptionQuote) => void;
 }
 
 export const ExpirationDateGroup: FC<ExpirationDateGroupProps> = ({

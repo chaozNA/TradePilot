@@ -39,7 +39,7 @@ function parseOptionSymbol(symbol: string): ParsedOptionSymbol {
     throw new Error(`Invalid option symbol format: ${symbol}`);
   }
 
-  const [_, underlyingSymbol, year, month, day, typeChar, strikePriceStr] =
+  const [, underlyingSymbol, year, month, day, typeChar, strikePriceStr] =
     match;
   const expirationDate = new Date(2000 + +year, +month - 1, +day);
   const type = typeChar === "C" ? "CALL" : "PUT";
@@ -60,11 +60,7 @@ export function createOptionQuoteFromSnapshot(
   const latestQuote = snapshot.LatestQuote;
   const latestTrade = snapshot.LatestTrade;
 
-  if (
-    !latestQuote?.AskPrice ||
-    !latestQuote?.BidPrice ||
-    !latestQuote?.Timestamp
-  ) {
+  if (!latestQuote) {
     throw new Error("Incomplete quote data in AlpacaOptionSnapshot");
   }
 

@@ -17,7 +17,7 @@ export class OptionsFetcherService {
   }): Promise<OptionQuote[]> {
     try {
       const latestQuote = await this.getLatestStockPrice(ticker);
-      console.log("Latest Quote: ", latestQuote);
+      console.log(`Latest Quote for ${ticker}: ${latestQuote}`);
       const strikePriceGte = latestQuote * 0.9;
       const strikePriceLte = latestQuote * 1.1;
 
@@ -28,7 +28,7 @@ export class OptionsFetcherService {
       futureDate.setDate(currentDate.getDate() + 90);
       const futureDateString = formatDate(futureDate);
       const config = {
-        totalLimit: 500,
+        totalLimit: 300,
         strike_price_gte: strikePriceGte,
         strike_price_lte: strikePriceLte,
         expiration_date_gte: currentDateString,

@@ -1,16 +1,6 @@
 import React, { FC, useState } from "react";
 import { OptionQuote } from "@/lib/types/OptionQuote";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { format } from "date-fns";
-import { ChevronDown, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils/utils";
 import { TradeModal } from "../trade/trade-modal";
 import { DateGroupedOptions, GroupedOptions } from "./option-types";
 import { ExpirationDateGroup } from "./expiration-date-group";

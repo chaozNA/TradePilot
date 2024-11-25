@@ -1,13 +1,8 @@
 import AlpacaClient from "../AlpacaClient";
 import { AlpacaOptionClient } from "@alpacahq/alpaca-trade-api/dist/resources/datav2/option_websocket_v1beta1";
 import { AlpacaOptionQuote } from "@alpacahq/alpaca-trade-api/dist/resources/datav2/entityv2";
-import {
-  QuoteCallback,
-  StreamData,
-  StreamError,
-  StreamStatus,
-} from "../types/alpaca";
-import { logger } from "../utils/logger";
+import { QuoteCallback, StreamData, StreamStatus } from "../types/alpaca";
+import { logger } from "@/lib/utils/logger";
 
 export class LiveQuoteService {
   private socket: AlpacaOptionClient;
@@ -38,7 +33,7 @@ export class LiveQuoteService {
       this.updateStatus({ isConnected: false });
     });
 
-    this.socket.onError((error: any) => {
+    this.socket.onError((error: Error) => {
       logger.error("WebSocket error:", error);
       this.updateStatus({
         error: typeof error === "string" ? error : "Connection error occurred",

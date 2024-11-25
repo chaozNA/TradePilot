@@ -1,6 +1,6 @@
 import { LiveQuoteService } from "@/lib/services/LiveQuoteService";
 import { QuoteCallback, StreamData } from "@/lib/types/alpaca";
-import logger from "@/lib/utils/logger";
+import { logger } from "@/lib/utils/logger";
 
 export async function GET(request: Request): Promise<Response> {
   const { searchParams } = new URL(request.url);

@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
 
-import {
-  getAccount,
-  getPositions,
-} from "@/lib/services/account/AccountService";
+import { getAccount } from "@/lib/services/account/AccountService";
 import { Portfolio } from "@/lib/types/portfolio";
 
 export async function GET() {
   const account = await getAccount();
-  const positions = await getPositions();
+  // const positions = await getPositions();
 
   const dummyPortfolio: Portfolio = {
     equity: account.portfolio_value,

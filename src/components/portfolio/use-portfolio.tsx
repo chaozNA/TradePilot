@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Portfolio, Position, Activity } from "@/lib/entity/portfolio";
+import { Portfolio, Position, Activity } from "@/lib/types/portfolio";
 
 export function usePortfolio() {
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
@@ -38,17 +38,6 @@ export function usePortfolio() {
     }
 
     fetchPortfolioData();
-
-    // Optional: Set up WebSocket connection for real-time updates
-    const ws = new WebSocket("wss://your-websocket-url");
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      // Update state based on websocket messages
-      // You'll need to implement this based on your WebSocket API
-    };
-
-    return () => ws.close();
   }, []);
 
   return {

@@ -5,7 +5,6 @@ import { getOptions, type OptionsState } from "@/app/actions/options";
 import OptionChainTable from "./option-chain-table";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import OptionSearch from "./option-search";
 
 const initialState: OptionsState = {

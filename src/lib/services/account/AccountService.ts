@@ -1,5 +1,5 @@
 import AlpacaClient from "@/lib/AlpacaClient";
-import logger from "@/lib/utils/logger";
+import { logger } from "@/lib/utils/logger";
 
 export async function getAccount() {
   try {

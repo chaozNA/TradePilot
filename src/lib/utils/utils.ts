@@ -10,7 +10,7 @@ export const isNumeric = (value: unknown) => {
   return !isNaN(Number(value)) && !isNaN(parseFloat(value));
 };
 
-export const parseResponseObject = (object = {}): any => {
+export const parseResponseObject = (object = {}) => {
   return Object.entries(object).reduce(
     (previousValue, [key, value]) => {
       const newValue =

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Position } from "@/lib/entity/portfolio";
+import { Position } from "@/lib/types/portfolio";
 
 export async function GET() {
   const dummyPositions: Position[] = [

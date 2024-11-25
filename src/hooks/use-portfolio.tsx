@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Portfolio, Position, Activity } from "@/lib/entity/portfolio";
+import { Portfolio, Position, Activity } from "@/lib/types/portfolio";
 
 export function usePortfolio() {
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);

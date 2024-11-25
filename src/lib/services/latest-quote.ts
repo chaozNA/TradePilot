@@ -3,7 +3,7 @@ import {
   AlpacaQuote,
 } from "@alpacahq/alpaca-trade-api/dist/resources/datav2/entityv2";
 import AlpacaClient from "../AlpacaClient";
-import logger from "@/lib/utils/logger";
+import { logger } from "@/lib/utils/logger";
 
 export default async function getLatestQuote(
   ticker: string,
