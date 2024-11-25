@@ -1,28 +1,31 @@
-"use client";
-import React from "react";
+"use client"; // Add this since we're using motion
+
+import { AnimatePresence, motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
+import { usePortfolio } from "@/hooks/use-portfolio";
 import { PortfolioOverview } from "@/components/portfolio/portfolio-overview";
 import { PositionsList } from "@/components/portfolio/positions-list";
 import { RecentActivity } from "@/components/portfolio/recent-activity";
-import { usePortfolio } from "@/hooks/use-portfolio";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
-import { Card } from "@/components/ui/card";
 
 export default function PortfolioPage() {
   const { portfolio, positions, activities, isLoading, error } = usePortfolio();
 
   if (error) {
     return (
-      <Card className="m-4 p-6">
-        <div className="text-red-500">Error loading portfolio: {error}</div>
-      </Card>
+      <div className="flex h-full items-center justify-center">
+        <Card className="m-4 bg-red-100 p-6 text-red-600 shadow-lg">
+          <div>Error loading portfolio: {error}</div>
+        </Card>
+      </div>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="flex flex-1 items-center justify-end">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex h-full flex-1 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -30,31 +33,54 @@ export default function PortfolioPage() {
   // Add null check for portfolio
   if (!portfolio) {
     return (
-      <Card className="m-4 p-6">
-        <div className="text-muted-foreground">No portfolio data available</div>
-      </Card>
+      <div className="flex h-full items-center justify-center">
+        <Card className="m-4 bg-gray-100 p-6 text-gray-500 shadow-lg">
+          <div>No portfolio data available</div>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <div className="container mx-auto space-y-6 p-4">
-      <h1 className="text-3xl font-bold">Portfolio</h1>
-      <PortfolioOverview portfolio={portfolio} />
+    <AnimatePresence mode="wait">
+      <motion.div
+        key="portfolio-page"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.3 }}
+        className="container mx-auto space-y-6 p-4"
+      >
+        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white">
+          Portfolio
+        </h1>
+        <PortfolioOverview portfolio={portfolio} />
 
-      <Tabs defaultValue="positions" className="w-full">
-        <TabsList>
-          <TabsTrigger value="positions">Positions</TabsTrigger>
-          <TabsTrigger value="activity">Recent Activity</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="positions" className="w-full">
+          <TabsList className="border-b border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-800">
+            <TabsTrigger
+              value="positions"
+              className="text-gray-700 transition-colors duration-200 hover:text-primary dark:text-gray-300"
+            >
+              Positions
+            </TabsTrigger>
+            <TabsTrigger
+              value="activity"
+              className="text-gray-700 transition-colors duration-200 hover:text-primary dark:text-gray-300"
+            >
+              Recent Activity
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="positions">
-          <PositionsList positions={positions} />
-        </TabsContent>
+          <TabsContent value="positions">
+            <PositionsList positions={positions} />
+          </TabsContent>
 
-        <TabsContent value="activity">
-          <RecentActivity activities={activities} />
-        </TabsContent>
-      </Tabs>
-    </div>
+          <TabsContent value="activity">
+            <RecentActivity activities={activities} />
+          </TabsContent>
+        </Tabs>
+      </motion.div>
+    </AnimatePresence>
   );
 }
