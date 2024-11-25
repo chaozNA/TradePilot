@@ -10,7 +10,7 @@ interface RecentActivityProps {
 export function RecentActivity({ activities }: RecentActivityProps) {
   if (activities.length === 0) {
     return (
-      <div className="py-8 text-center text-muted-foreground">
+      <div className="py-8 text-center text-gray-500 dark:text-gray-400">
         No recent activity
       </div>
     );
@@ -27,18 +27,22 @@ export function RecentActivity({ activities }: RecentActivityProps) {
 
 function ActivityCard({ activity }: { activity: Activity }) {
   return (
-    <Card className="p-4">
+    <Card className="rounded-lg bg-white p-4 shadow-sm hover:shadow-md dark:bg-gray-800">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="font-medium">{activity.type}</h3>
-          <p className="text-sm text-muted-foreground">
+          <h3 className="font-medium text-gray-900 dark:text-white">
+            {activity.type}
+          </h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {activity.symbol} - {activity.qty} shares @{" "}
             {formatCurrency(activity.price)}
           </p>
         </div>
         <div className="text-right">
-          <p className="font-medium">{formatCurrency(activity.total)}</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="font-medium text-gray-900 dark:text-white">
+            {formatCurrency(activity.total)}
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {formatDate(activity.timestamp)}
           </p>
         </div>

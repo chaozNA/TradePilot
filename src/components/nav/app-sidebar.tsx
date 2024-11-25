@@ -44,11 +44,13 @@ const menuGroups = {
 
 export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar className="border-r border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-background))] text-[hsl(var(--sidebar-foreground))]">
       <SidebarContent>
         <SidebarGroup>
-          <div className="flex justify-between">
-            <SidebarGroupLabel>Trade Pilot</SidebarGroupLabel>
+          <div className="flex items-center justify-between p-4">
+            <SidebarGroupLabel className="text-xl font-semibold">
+              Trade Pilot
+            </SidebarGroupLabel>
             {/* <ModeToggle /> */}
           </div>
           <SidebarGroupContent>
@@ -56,8 +58,11 @@ export function AppSidebar() {
               {menuGroups.main.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
+                    <a
+                      href={item.url}
+                      className="flex items-center space-x-3 rounded-md px-4 py-2 text-[hsl(var(--sidebar-foreground))] transition-colors duration-200 hover:bg-[hsl(var(--sidebar-accent))] hover:text-[hsl(var(--sidebar-accent-foreground))]"
+                    >
+                      <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>

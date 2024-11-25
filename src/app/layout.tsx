@@ -7,6 +7,7 @@ import React from "react";
 import { ModeToggle } from "@/components/nav/mode-toggle";
 import { cookies } from "next/headers";
 import BreadcrumbNav from "@/components/nav/breadcrumb-nav";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "Trade Pilot",
@@ -47,6 +48,7 @@ export default async function RootLayout({
                   </header>
                   <main className="container mx-auto flex-1 p-3">
                     {children}
+                    <SpeedInsights />
                   </main>
                 </div>
               </div>

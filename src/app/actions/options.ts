@@ -13,6 +13,7 @@ export async function getOptions(
   prevState: OptionsState | null,
   formData: FormData,
 ): Promise<OptionsState> {
+  logger.info("getOptions", { prevState, formData });
   const ticker = (formData.get("ticker") as string)?.toUpperCase();
 
   if (!ticker) {
