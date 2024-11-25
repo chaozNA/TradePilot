@@ -1,5 +1,5 @@
-import { Activity } from "@/lib/entity/portfolio";
-import { formatCurrency } from "@/lib/utils/PriceUtil";
+import { Activity } from "@/lib/types/portfolio";
+import { formatCurrency } from "@/lib/utils/utils";
 import { Card } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils/DateTimeUtils";
 

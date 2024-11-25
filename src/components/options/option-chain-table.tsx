@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import OptionQuoteDto from "@/lib/entity/OptionQuoteDto";
+import { OptionQuote } from "@/lib/types/OptionQuote";
 import {
   Table,
   TableBody,
@@ -16,13 +16,13 @@ import { DateGroupedOptions, GroupedOptions } from "./option-types";
 import { ExpirationDateGroup } from "./expiration-date-group";
 
 interface OptionChainTableProps {
-  options: OptionQuoteDto[];
+  options: OptionQuote[];
 }
 
 const OptionChainTable: FC<OptionChainTableProps> = ({ options }) => {
   const [expandedDates, setExpandedDates] = useState<Set<string>>(new Set());
   const [selectedOption, setSelectedOption] = useState<
-    OptionQuoteDto | undefined
+    OptionQuote | undefined
   >();
 
   const groupedOptions: DateGroupedOptions = options.reduce((acc, option) => {
@@ -88,9 +88,7 @@ const OptionChainTable: FC<OptionChainTableProps> = ({ options }) => {
               isExpanded={expandedDates.has(expirationDate)}
               onToggle={() => toggleDate(expirationDate)}
               groupedByStrike={groupedByStrike}
-              onOptionClick={(option: OptionQuoteDto) =>
-                setSelectedOption(option)
-              }
+              onOptionClick={(option: OptionQuote) => setSelectedOption(option)}
             />
           );
         })}

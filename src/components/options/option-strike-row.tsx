@@ -2,12 +2,12 @@ import React, { FC } from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils/utils";
 import { GroupedOption } from "./option-types";
-import OptionQuoteDto from "@/lib/entity/OptionQuoteDto";
+import { OptionQuote } from "@/lib/types/OptionQuote";
 
 interface OptionStrikeRowProps {
   strikePrice: number;
   options: GroupedOption;
-  onOptionClick: (option: OptionQuoteDto) => void;
+  onOptionClick: (option: OptionQuote) => void;
 }
 
 export const OptionStrikeRow: FC<OptionStrikeRowProps> = ({
@@ -42,11 +42,15 @@ export const OptionStrikeRow: FC<OptionStrikeRowProps> = ({
       <TableCell className="text-center">
         {formatPrice(call?.lastPrice)}
       </TableCell>
-      <TableCell className="text-center">{call?.volume || "-"}</TableCell>
+      <TableCell className="text-center">
+        {call?.impliedVolatility || "-"}
+      </TableCell>
       <TableCell className="bg-muted/30 text-center font-medium">
         ${strikePrice.toFixed(2)}
       </TableCell>
-      <TableCell className="text-center">{put?.volume || "-"}</TableCell>
+      <TableCell className="text-center">
+        {put?.impliedVolatility || "-"}
+      </TableCell>
       <TableCell
         className={cn(
           "cursor-pointer text-right transition-colors hover:bg-accent/50",

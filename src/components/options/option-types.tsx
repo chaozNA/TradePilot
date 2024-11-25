@@ -1,9 +1,9 @@
-import OptionQuoteDto from "@/lib/entity/OptionQuoteDto";
+import { OptionQuote } from "@/lib/types/OptionQuote";
 
 export interface GroupedOption {
-  call: OptionQuoteDto | null;
-  put: OptionQuoteDto | null;
+  call: OptionQuote | null;
+  put: OptionQuote | null;
 }
 
 export type GroupedOptions = Record<number, GroupedOption>;
-export type DateGroupedOptions = Record<string, OptionQuoteDto[]>;
+export type DateGroupedOptions = Record<string, OptionQuote[]>;

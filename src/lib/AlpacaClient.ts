@@ -5,7 +5,7 @@ import { AlpacaStocksClient } from "@alpacahq/alpaca-trade-api/dist/resources/da
 class AlpacaClient {
   private static instance: Alpaca;
 
-  private constructor() {} // Private constructor to prevent direct instantiation
+  private constructor() {}
 
   public static getInstance(): Alpaca {
     if (!AlpacaClient.instance) {

@@ -1,5 +1,6 @@
 import { LiveQuoteService } from "@/lib/services/LiveQuoteService";
 import { QuoteCallback, StreamData } from "@/lib/types/alpaca";
+import logger from "@/lib/utils/logger";
 
 export async function GET(request: Request): Promise<Response> {
   const { searchParams } = new URL(request.url);
@@ -17,7 +18,7 @@ export async function GET(request: Request): Promise<Response> {
         try {
           controller.enqueue(`data: ${JSON.stringify(data)}\n\n`);
         } catch (error) {
-          console.error("Stream error:", error);
+          logger.error("Stream error:", error);
           controller.error(error);
         }
       };

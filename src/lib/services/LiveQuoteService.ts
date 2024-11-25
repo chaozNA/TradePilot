@@ -7,6 +7,7 @@ import {
   StreamError,
   StreamStatus,
 } from "../types/alpaca";
+import { logger } from "../utils/logger";
 
 export class LiveQuoteService {
   private socket: AlpacaOptionClient;
@@ -38,7 +39,7 @@ export class LiveQuoteService {
     });
 
     this.socket.onError((error: any) => {
-      console.error("WebSocket error:", error);
+      logger.error("WebSocket error:", error);
       this.updateStatus({
         error: typeof error === "string" ? error : "Connection error occurred",
       });
@@ -82,7 +83,7 @@ export class LiveQuoteService {
         this.startMockData();
       }
     } catch (error) {
-      console.error("Subscription error:", error);
+      logger.error("Subscription error:", error);
       this.updateStatus({
         error: "Failed to subscribe to symbol",
       });
@@ -145,7 +146,7 @@ export class LiveQuoteService {
           this.socket.unsubscribeFromQuotes([this.symbol]);
         }
       } catch (error) {
-        console.error("Cleanup error:", error);
+        logger.error("Cleanup error:", error);
       }
     }
 

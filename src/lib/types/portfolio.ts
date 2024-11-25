@@ -1,6 +1,6 @@
 export interface Portfolio {
-  equity: number;
-  buyingPower: number;
+  equity: string;
+  buyingPower: string;
   dayPnL: number;
   totalPnL: number;
 }

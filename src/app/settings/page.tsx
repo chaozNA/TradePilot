@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, CheckCircle2, Loader2, XCircle } from "lucide-react";
+import logger from "@/lib/utils/logger";
 
 type ConnectionStatus = "disconnected" | "connecting" | "connected";
 
@@ -48,7 +49,7 @@ export default function SettingsPage() {
         const data = JSON.parse(event.data) as StreamData;
         setLiveData((prev) => [data, ...prev].slice(0, 100));
       } catch (error) {
-        console.error("Error parsing message:", error);
+        logger.error("Error parsing message:", error);
       }
     };
 

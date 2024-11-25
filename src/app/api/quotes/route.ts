@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import getLatestQuote, {
   getLatestOptionQuote,
 } from "@/lib/services/latest-quote";
+import { logger } from "@/lib/utils/logger";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const ticker = request.nextUrl.searchParams.get("ticker");
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         : await getLatestQuote(ticker);
     return NextResponse.json(quote, { status: 200 });
   } catch (error) {
-    console.error("Error fetching quote:", error);
+    logger.error("Error fetching quote:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

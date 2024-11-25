@@ -8,11 +8,11 @@ import {
 } from "@/components/ui/table";
 import { OptionStrikeRow } from "./option-strike-row";
 import { GroupedOptions } from "./option-types";
-import OptionQuoteDto from "@/lib/entity/OptionQuoteDto";
+import { OptionQuote } from "@/lib/types/OptionQuote";
 
 interface OptionStrikeTableProps {
   groupedByStrike: GroupedOptions;
-  onOptionClick: (option: OptionQuoteDto) => void;
+  onOptionClick: (option: OptionQuote) => void;
 }
 
 export const OptionStrikeTable: FC<OptionStrikeTableProps> = ({

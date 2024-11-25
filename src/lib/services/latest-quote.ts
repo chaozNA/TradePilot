@@ -3,6 +3,7 @@ import {
   AlpacaQuote,
 } from "@alpacahq/alpaca-trade-api/dist/resources/datav2/entityv2";
 import AlpacaClient from "../AlpacaClient";
+import logger from "@/lib/utils/logger";
 
 export default async function getLatestQuote(
   ticker: string,
@@ -14,7 +15,7 @@ export default async function getLatestQuote(
     console.log(`Quote: ${quote}`);
     return quote;
   } catch (error) {
-    console.error(`Error fetching quote for ${ticker}:`, error);
+    logger.error(`Error fetching quote for ${ticker}:`, error);
     throw error;
   }
 }
@@ -33,7 +34,7 @@ export async function getLatestOptionQuote(
     }
     return optionQuote;
   } catch (error) {
-    console.error(`Error fetching quote for ${ticker}:`, error);
+    logger.error(`Error fetching quote for ${ticker}:`, error);
     throw error;
   }
 }

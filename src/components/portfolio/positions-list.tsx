@@ -6,8 +6,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatCurrency, formatPercentage } from "@/lib/utils/PriceUtil";
-import { Position } from "@/lib/entity/portfolio";
+import { Position } from "@/lib/types/portfolio";
+import { formatCurrency, formatPercentage } from "@/lib/utils/utils";
+
 import { cn } from "@/lib/utils/utils";
 
 interface PositionsListProps {

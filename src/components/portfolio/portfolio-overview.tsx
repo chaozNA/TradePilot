@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { formatCurrency } from "@/lib/utils/PriceUtil";
-import { Portfolio } from "@/lib/entity/portfolio";
+import { formatCurrency } from "@/lib/utils/utils";
+import { Portfolio } from "@/lib/types/portfolio";
 
 interface PortfolioOverviewProps {
   portfolio: Portfolio | null; // Update to accept null
@@ -16,12 +16,12 @@ export function PortfolioOverview({ portfolio }: PortfolioOverviewProps) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <MetricCard
         title="Portfolio Value"
-        value={formatCurrency(equity)}
+        value={equity}
         subtitle="Total Equity"
       />
       <MetricCard
         title="Buying Power"
-        value={formatCurrency(buyingPower)}
+        value={buyingPower}
         subtitle="Available to Trade"
       />
       <MetricCard
